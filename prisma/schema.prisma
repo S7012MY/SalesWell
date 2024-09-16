@@ -1,10 +1,12 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["ycbm_sync", "public"]
 }
 
 model bookings {
@@ -27,12 +29,16 @@ model bookings {
   timezone     String?
   accountid    String?
   profileid    String?
+
+  @@schema("ycbm_sync")
 }
 
 model booking_status {
   id          String     @id
   description String
   bookings    bookings[] @relation("BookingStatus")
+
+  @@schema("ycbm_sync")
 }
 
 model prospects {
@@ -41,6 +47,8 @@ model prospects {
   mail     String     @unique
   fb       String?
   phone    String     @unique
+
+  @@schema("ycbm_sync")
 }
 
 model team_members {
@@ -49,9 +57,19 @@ model team_members {
   password   String
   last_login DateTime?
   role       Role      @default(USER)
+
+  @@schema("ycbm_sync")
 }
 
 enum Role {
   USER
   ADMIN
+
+  @@schema("ycbm_sync")
+}
+
+model supersecret_users {
+  username String   @id
+  
+  @@schema("public")
 }
